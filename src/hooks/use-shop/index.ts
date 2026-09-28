@@ -21,9 +21,10 @@ export function useShop(slug: string, botKey: string) {
         if (!cancelled) {
           setConfig(cfg);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (!cancelled) {
-          setError(err.response?.data?.message ?? "No pudimos cargar el negocio");
+          const message = err instanceof Error ? err.message : "No pudimos cargar el negocio";
+          setError(message);
         }
       } finally {
         if (!cancelled) setLoading(false);

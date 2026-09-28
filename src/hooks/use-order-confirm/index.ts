@@ -38,8 +38,9 @@ export function useOrderConfirm({ slug, botKey, sessionId }: UseOrderConfirmOpti
     setError(null);
     try {
       setOrder(prev => prev ? { ...prev, customerName } : null);
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? "Error al confirmar");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Error al confirmar";
+      setError(message);
     } finally {
       setConfirming(false);
     }

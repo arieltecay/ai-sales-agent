@@ -4,8 +4,8 @@ interface ChatThreadProps {
   isTyping: boolean;
   order: { publicCode: string; total: number; items: Array<{ name: string; quantity: number; subtotal: number }> } | null;
   paymentIntent: "cash" | "transfer" | null;
-  onPaymentIntent: (intent: "cash" | "transfer") => void;
-  onQuickReply: (text: string) => void;
+  onPaymentIntent: (_intent: "cash" | "transfer") => void;
+  onQuickReply: (_text: string) => void;
   transferInfo: { alias: string; cbu: string } | null;
   paidNotice: string | null;
   onMarkPaid: () => void;

@@ -42,10 +42,11 @@ export default function ChatPage() {
   useEffect(() => {
     // El saludo solo va en chats nuevos: si el effect de historial cargó
     // mensajes previos, el cliente retoma donde dejó.
-    if (config && config.available && messages.length === 0 && historyLoaded) {
+    const isNewChat = messages.length === 0;
+    if (config && config.available && isNewChat && historyLoaded) {
       setGreeting(config.greeting);
     }
-  }, [config, messages.length === 0, historyLoaded, setGreeting]);
+  }, [config, messages, historyLoaded, setGreeting]);
   if (loading) return <ChatLoadingState />;
   if (error || !config) return <ChatErrorState message={error ?? "Negocio no disponible"} />;
 
@@ -57,7 +58,7 @@ export default function ChatPage() {
   const onlineConfig = config as { available: true; businessName: string; greeting: string; quickReplies: string[]; whatsappNumber: string; transferInfo: { alias: string; cbu: string } | null };
 
   return (
-    <div className="min-h-screen bg-canvas">
+    <div className="min-h-screen bg-canvas flex flex-col">
       <ShopHeader businessName={onlineConfig.businessName} />
       <ChatThread
         quickReplies={onlineConfig.quickReplies}

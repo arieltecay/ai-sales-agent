@@ -6,8 +6,8 @@ interface UseChatOptions {
   botKey: string;
   sessionId: string;
   businessName?: string;
-  onOrder?: (order: { publicCode: string; total: number; items: Array<{ name: string; quantity: number; subtotal: number }> }) => void;
-  onCustomer?: (customer: { publicCode: string; customerName: string | null; paymentIntent: "cash" | "transfer" | null }) => void;
+  onOrder?: (_order: { publicCode: string; total: number; items: Array<{ name: string; quantity: number; subtotal: number }> }) => void;
+  onCustomer?: (_customer: { publicCode: string; customerName: string | null; paymentIntent: "cash" | "transfer" | null }) => void;
 }
 
 export function useChat({ slug, botKey, sessionId, onOrder, onCustomer }: UseChatOptions) {

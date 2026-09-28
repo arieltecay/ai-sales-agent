@@ -3,13 +3,13 @@ export type BotConfig =
   | { available: false; businessName: string };
 
 export interface ChatStreamHandlers {
-  onText: (content: string) => void;
-  onToolCall: (toolName: string) => void;
+  onText: (_content: string) => void;
+  onToolCall: (_toolName: string) => void;
   onTextReset?: () => void;
-  onOrder?: (order: { publicCode: string; total: number; items: Array<{ name: string; quantity: number; unitPrice: number; subtotal: number }> }) => void;
-  onCustomer?: (customer: { publicCode: string; customerName: string | null; paymentIntent: "cash" | "transfer" | null }) => void;
+  onOrder?: (_order: { publicCode: string; total: number; items: Array<{ name: string; quantity: number; unitPrice: number; subtotal: number }> }) => void;
+  onCustomer?: (_customer: { publicCode: string; customerName: string | null; paymentIntent: "cash" | "transfer" | null }) => void;
   onDone: () => void;
-  onError: (message: string) => void;
+  onError: (_message: string) => void;
 }
 
 export interface CreateOrderParams {

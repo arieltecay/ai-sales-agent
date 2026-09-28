@@ -7,7 +7,7 @@ interface OrderSectionProps {
   confirming: boolean;
   error: string | null;
   onCollapse: () => void;
-  onConfirm: (customerName: string) => void;
+  onConfirm: (_customerName: string) => void;
 }
 
 export const OrderSection = ({ sheetOpen, order, confirming, error, onCollapse, onConfirm }: OrderSectionProps) => {

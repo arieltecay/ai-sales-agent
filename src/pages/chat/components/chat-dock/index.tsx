@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 
 interface ChatDockProps {
   showPeekBar: boolean;
@@ -7,13 +7,13 @@ interface ChatDockProps {
   isTyping: boolean;
   order: { publicCode: string; total: number; items: Array<{ name: string; quantity: number; subtotal: number }> } | null;
   onExpand: () => void;
-  onSend: (text: string) => void;
+  onSend: (_text: string) => void;
 }
 
 export const ChatDock = ({ showPeekBar, itemCount, total, isTyping, order, onExpand, onSend }: ChatDockProps) => {
   const [input, setInput] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (input.trim() && !isTyping) {
       onSend(input.trim());
