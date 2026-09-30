@@ -1,6 +1,8 @@
 # Library System - AI Bot
 
-Widget de chat inteligente para negocios (escuelas, librerías, etc.). Frontend en React 19 + Vite + Tailwind CSS v4.
+Widget de chat inteligente para negocios. Frontend en React 19 + Vite + Tailwind CSS v4.
+
+<!-- validando auto-deploy -->
 
 ## 🚀 Quick Start
 
