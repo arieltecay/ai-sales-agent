@@ -15,13 +15,19 @@ export async function getBotConfig(slug: string, botKey: string): Promise<BotCon
   return handleResponse(res);
 }
 
-function parseSseLine(line: string): { event: string; data: SseEventData } | null {
-  if (!line.startsWith("event:") && !line.startsWith("data:")) return null;
-  const eventMatch = line.match(/^event:\s*(.+)$/);
-  const dataMatch = line.match(/^data:\s*(.+)$/);
-  if (!eventMatch || !dataMatch) return null;
+function parseSseChunk(chunk: string): { event: string; data: SseEventData } | null {
+  let event = "";
+  let dataStr = "";
+  for (const line of chunk.split("\n")) {
+    if (line.startsWith("event:")) {
+      event = line.slice(6).trim();
+    } else if (line.startsWith("data:")) {
+      dataStr = line.slice(5).trim();
+    }
+  }
+  if (!event) return null;
   try {
-    return { event: eventMatch[1].trim(), data: JSON.parse(dataMatch[1].trim()) };
+    return { event, data: dataStr ? JSON.parse(dataStr) : {} };
   } catch {
     return null;
   }
@@ -48,41 +54,39 @@ export async function sendChatMessage(params: SendChatMessageParams): Promise<vo
     const lines = buffer.split("\n\n");
     buffer = lines.pop() ?? "";
     for (const chunk of lines) {
-      for (const line of chunk.split("\n")) {
-        const parsed = parseSseLine(line);
-        if (!parsed) continue;
-        const { event, data } = parsed;
-        switch (event) {
-          case "text":
-            params.onText?.(data.content ?? "");
-            break;
-          case "text_reset":
-            params.onTextReset?.();
-            break;
-          case "tool_call":
-            params.onToolCall?.(data.toolName ?? "");
-            break;
-          case "order":
-            params.onOrder?.({
-              publicCode: data.publicCode ?? "",
-              total: data.total ?? 0,
-              items: (data.items ?? []).map(i => ({ name: i.name, quantity: i.quantity, unitPrice: i.unitPrice ?? 0, subtotal: i.subtotal })),
-            });
-            break;
-          case "customer":
-            params.onCustomer?.({
-              publicCode: data.publicCode ?? "",
-              customerName: data.customerName ?? null,
-              paymentIntent: data.paymentIntent ?? null,
-            });
-            break;
-          case "done":
-            params.onDone?.();
-            return;
-          case "error":
-            params.onError?.(data.message ?? "Error desconocido");
-            return;
-        }
+      const parsed = parseSseChunk(chunk);
+      if (!parsed) continue;
+      const { event, data } = parsed;
+      switch (event) {
+        case "text":
+          params.onText?.(data.content ?? "");
+          break;
+        case "text_reset":
+          params.onTextReset?.();
+          break;
+        case "tool_call":
+          params.onToolCall?.(data.toolName ?? "");
+          break;
+        case "order":
+          params.onOrder?.({
+            publicCode: data.publicCode ?? "",
+            total: data.total ?? 0,
+            items: (data.items ?? []).map(i => ({ name: i.name, quantity: i.quantity, unitPrice: i.unitPrice ?? 0, subtotal: i.subtotal })),
+          });
+          break;
+        case "customer":
+          params.onCustomer?.({
+            publicCode: data.publicCode ?? "",
+            customerName: data.customerName ?? null,
+            paymentIntent: data.paymentIntent ?? null,
+          });
+          break;
+        case "done":
+          params.onDone?.();
+          return;
+        case "error":
+          params.onError?.(data.message ?? "Error desconocido");
+          return;
       }
     }
   }
